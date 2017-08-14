@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="./jquery.js" charset="utf-8"></script>
+  <style>
+  *{
+  	margin: 0px;
+  	padding: 0px;
+  	position: relative;
+  }
+  #icnbx{
+  	position: fixed;
+  	z-index: 100;
+  	right: 3px;
+  	bottom: 0px;
+  	height: 18px;
+  	padding: 6px;
+  }
+  #icn{
+  	background: #ddd;
+  }
+  #icn,#icn:before,#icn:after{
+  	width: 26px;
+  	height: 3px;
+  }
+  #icn:before,#icn:after{
+  	display: block;
+  	content: "";
+  	position: absolute;
+	top: 50%;
+  	left: 0;
+  	background: #ddd;
+  }
+  #icn:before{
+  	margin-top: 10px;
+  }
+  #icn:after{
+  	margin-top: 4px;
+  }
+  #bar{
+  	background: #ddd;
+  	width: 100%;
+  	height: 30px;
+  }
+  #add{
+  	width: 95%;
+  	margin: 6px;
+  }
+  #search{
+  	float: right;
+  	margin-top: 22px;
+	width: 20px;
+	height: 8px;
+	transform: rotate(45deg);
+	border-bottom-right-radius: 5px;
+	border-top-right-radius: 5px;
+	background: #fff;
+
+  }
+  #search:before{
+  	border: 5px solid #fff;
+	content: "";
+	position: absolute;
+	top: -11px;
+	left: -30px;
+	display: block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+
+  }
+  #icnbar{
+  	position: fixed;
+  	z-index: 10;
+  	padding: 8px;
+  	bottom: 0px;
+  	width: 100%;
+  	height: 35px;
+  }
+  #back{
+  	top: -5px;
+  	display: inline-block;
+  	border-style: solid;
+	border-width: 15px 35px 15px 0;
+	border-color: transparent #ddd transparent transparent;
+  }
+  #go{
+  	top: -5px;
+  	display: inline-block;
+  	border-style: solid;
+	border-width: 15px 0 15px 35px;
+	border-color: transparent transparent transparent #ddd;
+  }
+  #quit{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	border:solid 5px #ddd;
+  }
+  #quit:before{
+	display:block;
+	content:"";
+	position:absolute;
+	top:0px;
+	left:12px;
+	width:5px;
+	height:30px;
+	background: #ddd;
+	transform: rotate(45deg);
+
+  }
+  #quit:after{
+	display:block;
+	content:"";
+	position:absolute;
+	top:0px;
+	left:12px;
+	width:5px;
+	height:30px;
+	background: #ddd;
+	transform: rotate(135deg);
+  }
+  #plus{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	border:solid 5px #ddd;
+  }
+  #plus:before{
+	display:block;
+	content:"";
+	position:absolute;
+	top:0px;
+	left:12px;
+	width:5px;
+	height:30px;
+	background: #ddd;
+  }
+  #plus:after{
+	display:block;
+	content:"";
+	position:absolute;
+	top:0px;
+	left:12px;
+	width:5px;
+	height:30px;
+	background: #ddd;
+	transform: rotate(90deg);
+  }
+  #load{
+    display:inline-block;
+    position:relative;
+  	top:-5px;
+    width:30px;
+    height:30px;
+    border: 5px solid #ddd;
+    border-right-color: transparent;
+    border-bottom-style: dotted;
+    transform:rotate(10deg);
+    border-radius:50%;
+    box-sizing: border-box;
+}
+#load:after{
+	left: 16px;
+	top: -3px;
+	content: '';
+	position: absolute;
+  	display: inline-block;
+  	border-style: solid;
+	border-width: 6px 0 6px 8px;
+	border-color: transparent transparent transparent #ddd;
+    transform:rotate(45deg);
+}
+#vbox{
+	width: 100%;
+	height: 100%;
+}
+#view{
+	display: block;
+}
+
+  </style>
+</head>
+<body>
+<div id="bar">
+<input type="text" id="add" name="">
+<div id="search"></div>
+</div>
+<div id="vbox">
+</div>
+<div id="icnbar">
+	<div id="quit"></div>
+	<div id="plus"></div>
+	<div id="load"></div>
+	<div id="back"></div>
+	<div id="go"></div>
+</div>
+<div id="icnbx">
+	<div id="icn"></div>
+</div>
+<script>
+'use strict';
+window.jQuery = window.$ = require('./jquery');
+const ele = require('electron');
+const ipc = ele.ipcRenderer;
+	(function(){
+		ipc.on('re-setUp', function(res,args) {
+                $('#vbox').append('<webview id="view" src="https://www.youtube.com/" autosize="on" style="display:inline-flex; width:'+args.width+'px; height:'+args.height+'px"></webview>');
+            });
+		ipc.send('setUp');
+		$('#icnbx').on('click',function(){
+			if($('#icnbar').css('display') == 'none'){
+				$('#icnbar').show();
+			}else{
+				$('#icnbar').hide();
+			}
+		});
+		$('#search').on('click',function(){
+			var add = $('#add').val();
+			var res = add.indexOf('https://www.youtube.com');
+			if(res === 0){
+				$('#view').attr('src',add);
+			}
+		});
+		$('#quit').on('click',function(){
+			ipc.send('close');
+		});
+	}());
+</script>
+</body>
+</html>
